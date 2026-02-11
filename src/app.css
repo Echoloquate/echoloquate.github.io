@@ -1,0 +1,144 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/*
+ * Liquid Glass Design System
+ * Inspired by iOS 26's frosted glass aesthetic.
+ * Uses Tailwind's @theme directive to register custom design tokens.
+ */
+@theme {
+	/* Glass background colors (semi-transparent for backdrop-filter) */
+	--color-glass-light: rgba(255, 255, 255, 0.12);
+	--color-glass-medium: rgba(255, 255, 255, 0.18);
+	--color-glass-heavy: rgba(255, 255, 255, 0.25);
+	--color-glass-border: rgba(255, 255, 255, 0.2);
+
+	/* Accent colors */
+	--color-accent: #6eb1ff;
+	--color-accent-hover: #93c5ff;
+
+	/* Text on glass */
+	--color-text-primary: #f0f0f5;
+	--color-text-secondary: #a0a0b5;
+	--color-text-muted: #6b6b80;
+
+	/* Blur values */
+	--blur-glass: 16px;
+	--blur-glass-medium: 24px;
+	--blur-glass-heavy: 40px;
+	--blur-glass-nav: 20px;
+
+	/* Border radius for glass panels */
+	--radius-glass: 20px;
+	--radius-glass-lg: 28px;
+	--radius-glass-sm: 12px;
+
+	/* Shadows for depth */
+	--shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.2);
+	--shadow-glass-hover: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Gradient mesh background ---- */
+body {
+	min-height: 100vh;
+	color: var(--color-text-primary);
+	background: #0e0e1a;
+	background-image:
+		radial-gradient(ellipse at 20% 20%, rgba(110, 80, 200, 0.4) 0%, transparent 50%),
+		radial-gradient(ellipse at 80% 10%, rgba(60, 130, 240, 0.3) 0%, transparent 50%),
+		radial-gradient(ellipse at 60% 80%, rgba(180, 60, 200, 0.25) 0%, transparent 50%),
+		radial-gradient(ellipse at 10% 70%, rgba(40, 160, 200, 0.2) 0%, transparent 50%);
+}
+
+/* ---- Reusable glass utility classes ---- */
+
+.glass {
+	background: var(--color-glass-light);
+	backdrop-filter: blur(var(--blur-glass));
+	-webkit-backdrop-filter: blur(var(--blur-glass));
+	border: 1px solid var(--color-glass-border);
+	border-radius: var(--radius-glass);
+	box-shadow: var(--shadow-glass);
+}
+
+.glass-medium {
+	background: var(--color-glass-medium);
+	backdrop-filter: blur(var(--blur-glass-medium));
+	-webkit-backdrop-filter: blur(var(--blur-glass-medium));
+	border: 1px solid var(--color-glass-border);
+	border-radius: var(--radius-glass);
+	box-shadow: var(--shadow-glass);
+}
+
+.glass-heavy {
+	background: var(--color-glass-heavy);
+	backdrop-filter: blur(var(--blur-glass-heavy));
+	-webkit-backdrop-filter: blur(var(--blur-glass-heavy));
+	border: 1px solid var(--color-glass-border);
+	border-radius: var(--radius-glass-lg);
+	box-shadow: var(--shadow-glass);
+}
+
+.glass-nav {
+	background: rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(var(--blur-glass-nav));
+	-webkit-backdrop-filter: blur(var(--blur-glass-nav));
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 9999px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.glass-button {
+	background: var(--color-glass-medium);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid var(--color-glass-border);
+	border-radius: var(--radius-glass-sm);
+	padding: 0.625rem 1.5rem;
+	color: var(--color-text-primary);
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: var(--color-glass-heavy);
+		box-shadow: var(--shadow-glass-hover);
+		transform: translateY(-1px);
+	}
+}
+
+.glass-input {
+	background: rgba(255, 255, 255, 0.06);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: var(--radius-glass-sm);
+	padding: 0.625rem 1rem;
+	color: var(--color-text-primary);
+	transition: border-color 0.2s ease;
+
+	&:focus {
+		outline: none;
+		border-color: var(--color-accent);
+	}
+
+	&::placeholder {
+		color: var(--color-text-muted);
+	}
+}
+
+/* ---- Prose styling for blog posts (over glass backgrounds) ---- */
+.prose {
+	--tw-prose-body: var(--color-text-primary);
+	--tw-prose-headings: var(--color-text-primary);
+	--tw-prose-links: var(--color-accent);
+	--tw-prose-bold: var(--color-text-primary);
+	--tw-prose-code: var(--color-accent);
+	--tw-prose-pre-bg: rgba(0, 0, 0, 0.4);
+	--tw-prose-pre-code: var(--color-text-primary);
+}
+
+/* Shiki code blocks inside prose */
+.prose pre {
+	border-radius: var(--radius-glass-sm);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+}

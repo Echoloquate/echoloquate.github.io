@@ -1,148 +1,42 @@
-# Personal Site
+# sv
 
-## Overview
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-A personal portfolio website for a professional programmer. The site serves as a marketing tool to showcase skills, projects, and experience to potential employers, clients, and collaborators.
+## Creating a project
 
----
+If you're seeing this, you've probably already done this step. Congrats!
 
-## Pages
+```sh
+# create a new project
+npx sv create my-app
+```
 
-### 1. Home / Landing Page
+To recreate this project with the same configuration:
 
-- Hero section with name, professional title, and a brief tagline
-- Call to action buttons (e.g., "View My Work", "Get In Touch")
-- Featured projects section (2-3 highlight cards pulled from the Projects page)
-- Brief skills overview or tech stack icons
-- Latest blog post preview
+```sh
+# recreate this project
+npx sv create --template minimal --types ts --no-install .
+```
 
-### 2. About Me
+## Developing
 
-- Professional background and personal story
-- Tech stack and skills broken out by category (languages, frameworks, tools, platforms)
-- Career timeline or work experience highlights
-- Soft skills and working style
-- Downloadable resume/CV (PDF link)
-- Professional photo/headshot
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-### 3. Projects / Portfolio
+```sh
+npm run dev
 
-- Filterable grid or list of projects
-- Each project card includes:
-  - Project name and description
-  - Technologies used (tags)
-  - Screenshots or demo media
-  - Links to live demo and source code (GitHub)
-  - Your role and key contributions
-  - Problem solved / impact summary
-- 3-6 featured projects minimum
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-### 4. Blog
+## Building
 
-- List of blog posts with title, date, excerpt, and tags
-- Individual post pages with full content
-- Category or tag filtering
-- Code syntax highlighting for technical posts
-- Estimated read time
-- Share buttons (optional)
+To create a production version of your app:
 
-### 5. Testimonials
+```sh
+npm run build
+```
 
-- Quotes from colleagues, clients, or collaborators
-- Name, role, and company of the person giving the testimonial
-- Photo or avatar (optional)
-- Displayed as a carousel, grid, or dedicated section
-- Can also be embedded as a section on the Home or About page
+You can preview the production build with `npm run preview`.
 
-### 6. Contact
-
-- Contact form (name, email, subject, message)
-- Direct email link as a fallback
-- Links to professional profiles:
-  - GitHub
-  - LinkedIn
-  - Any other relevant platforms (Twitter/X, Dev.to, Stack Overflow, etc.)
-- Availability status (e.g., "Open to full-time roles", "Available for freelance")
-- Location / timezone info (optional)
-
----
-
-## Technical Considerations
-
-### Responsive Design
-- Mobile-first approach
-- Breakpoints for mobile, tablet, and desktop
-- Touch-friendly navigation and interactions
-
-### Performance
-- Fast load times (target < 2s initial load)
-- Optimized images (lazy loading, modern formats like WebP)
-- Minimal JavaScript bundle size
-
-### SEO
-- Semantic HTML5 structure
-- Meta tags (title, description, Open Graph, Twitter cards)
-- Sitemap and robots.txt
-- Clean URL structure
-
-### Accessibility (a11y)
-- WCAG 2.1 AA compliance
-- Keyboard navigable
-- Proper heading hierarchy and ARIA labels
-- Sufficient color contrast
-
-### Analytics
-- Privacy-respecting analytics (e.g., Plausible, Umami, or Google Analytics)
-- Track page views, referral sources, and visitor trends
-
----
-
-## Tech Stack
-
-- **Framework:** SvelteKit (Svelte 5) — full-stack framework with file-based routing, SSR/SSG support
-- **Styling:** Tailwind CSS — utility-first, pairs well with Svelte's scoped styles for custom glass effects
-- **Blog engine:** mdsvex — Markdown preprocessor for Svelte, supports Svelte components inside posts
-- **Syntax highlighting:** Shiki (built into mdsvex) for code blocks in blog posts
-- **Hosting:** Vercel or Netlify (both have first-class SvelteKit adapter support)
-- **Contact form:** Formspree or SvelteKit form actions with an email API (e.g., Resend)
-- **Analytics:** Plausible or Umami (lightweight, privacy-respecting)
-
----
-
-## Design Direction — iOS 26 Liquid Glass
-
-### Core Aesthetic
-- Translucent, frosted glass panels (`backdrop-filter: blur()` + semi-transparent backgrounds)
-- Depth and layering — floating cards and surfaces with soft, diffused shadows
-- Light, airy feel with vibrant gradient backgrounds that bleed through glass layers
-- Generous rounded corners on all interactive surfaces
-- Subtle refraction and specular highlight effects on glass edges
-
-### Color Palette
-- Soft, muted base tones with vibrant accent colors visible through translucent layers
-- Background: fluid gradient meshes (soft blues, purples, pinks, or dynamic ambient colors)
-- Glass surfaces: `rgba(255, 255, 255, 0.3–0.6)` with blur overlays
-- Text: high-contrast against glass (dark text on light glass, white text on dark glass)
-- Accents: vibrant but not harsh — pulled from the gradient background
-
-### Typography
-- Clean sans-serif system font stack (SF Pro style): `Inter`, `system-ui`, or similar
-- Light to medium font weights on glass surfaces
-- Clear hierarchy: large bold headings, lighter body text
-
-### Navigation
-- Translucent floating top nav bar with glass effect
-- Collapses to a glass-panel hamburger menu on mobile
-- Active state indicated by a brighter glass pill or subtle glow
-
-### Components
-- Cards: frosted glass panels with soft borders and hover lift animations
-- Buttons: glass-style with subtle gradient fills, hover glow effects
-- Inputs: translucent fields with soft inner glow on focus
-- Sections: layered glass panels at varying depths over a gradient background
-
-### Motion & Interaction
-- Smooth, spring-based transitions (Svelte's built-in transitions and animations)
-- Subtle parallax or depth shifts on scroll
-- Hover states: gentle scale, glow, or blur intensity changes
-- Page transitions: crossfade or slide with glass opacity shifts
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
