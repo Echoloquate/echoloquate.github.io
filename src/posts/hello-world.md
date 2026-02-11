@@ -1,7 +1,7 @@
 ---
 title: Hello World
-date: '2026-02-11'
-description: My first blog post — testing mdsvex and Shiki syntax highlighting.
+date: '2026-02-08'
+description: First post. Testing the blog setup and making sure code blocks don't look terrible.
 tags:
   - meta
   - svelte
@@ -11,18 +11,13 @@ published: true
 
 # Hello World
 
-Welcome to my blog! This is a test post to verify that **mdsvex** and **Shiki** syntax highlighting are working correctly.
+First post, so I'm mostly just making sure the plumbing works — mdsvex processes the markdown, Shiki highlights the code, and nothing catches fire.
 
-## Why SvelteKit?
-
-SvelteKit is a full-stack framework that makes building web apps a joy. Here's a quick example of a Svelte 5 component using runes:
+Here's a Svelte 5 component to see if syntax highlighting holds up:
 
 ```svelte
 <script lang="ts">
-  // $state creates reactive state
   let count = $state(0);
-
-  // $derived auto-updates when count changes
   let doubled = $derived(count * 2);
 </script>
 
@@ -31,9 +26,7 @@ SvelteKit is a full-stack framework that makes building web apps a joy. Here's a
 </button>
 ```
 
-## Code Highlighting
-
-Shiki provides VS Code-quality syntax highlighting. Here's some TypeScript:
+And some TypeScript:
 
 ```typescript
 interface BlogPost {
@@ -50,7 +43,7 @@ function getLatestPosts(posts: BlogPost[]): BlogPost[] {
 }
 ```
 
-And some CSS with the glass effect:
+And the glass CSS this site uses:
 
 ```css
 .glass {
@@ -62,4 +55,4 @@ And some CSS with the glass effect:
 }
 ```
 
-That's it for now. More posts coming soon!
+Everything renders. Ship it.

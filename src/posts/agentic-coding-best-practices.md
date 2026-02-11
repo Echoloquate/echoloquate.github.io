@@ -1,7 +1,7 @@
 ---
-title: 'Agentic Coding: Lessons From Building Software With AI'
-date: '2026-02-10'
-description: Practical advice for working effectively with AI coding agents — from prompt structure to review discipline.
+title: "Agentic Coding: What Actually Worked for Me"
+date: "2026-02-11"
+description: I built this site with an AI coding agent. Some of it went great, some of it didn't. Here's what I'd tell someone about to try it.
 tags:
   - ai
   - workflow
@@ -10,116 +10,57 @@ readingTime: 8 min read
 published: true
 ---
 
-# Agentic Coding: Lessons From Building Software With AI
+# Agentic Coding: What Actually Worked for Me
 
-I built this entire portfolio site collaboratively with an AI coding agent. Not "AI generated the boilerplate and I took over" — I mean the full loop: planning, scaffolding, implementation, debugging, and deployment. Here's what I've learned about making that workflow actually productive.
+I built this portfolio site with an AI coding agent — not just the boilerplate, the whole thing. Planning, scaffolding, implementation, debugging, deployment. It was a useful experiment and I came out of it with some opinions.
 
-## What Agentic Coding Actually Is
+## It's not autocomplete
 
-Agentic coding is a workflow where an AI agent operates as an active collaborator in your development process. Unlike autocomplete or one-off code generation, the agent has context about your project, can read and modify files, run commands, and iterate on its own work.
+The thing that separates agentic coding from Copilot-style autocomplete is that the agent takes multi-step actions. It reads your files, makes a plan, writes code across multiple files, runs the build, sees errors, and fixes them. It's a loop, not a one-shot prediction.
 
-The key distinction: **the agent takes multi-step actions toward a goal**, not just single predictions. It reads your codebase, forms a plan, writes code, checks for errors, and fixes what's broken — in a loop.
+That loop is powerful when it works. When it doesn't, it can waste a lot of your time confidently going in the wrong direction. The skill is knowing when to let it run and when to interrupt.
 
-## Start With a Spec, Not a Prompt
+## Write a spec first, or you'll regret it
 
-The single biggest factor in output quality is the clarity of your starting point. A vague prompt like "build me a portfolio site" produces vague results. A spec that defines pages, tech stack, design language, and conventions produces something you can actually ship.
+The biggest lever on output quality is how clearly you define what you want before the agent starts writing code. I tried both ways. "Build me a portfolio site" gets you something generic and bland. A spec that nails down pages, tech stack, design direction, and conventions gets you something you might actually keep.
 
-For this site, the process was:
+My process ended up being:
 
-1. **Brainstorm** — Conversational back-and-forth to define scope
-2. **Spec** — A concrete document with pages, features, and technical decisions
-3. **CLAUDE.md** — Project context the agent references in every session
-4. **Plan mode** — Agent reads the spec, explores the repo, and proposes an implementation plan before writing any code
-5. **Execute** — Implementation against the approved plan
+1. Back-and-forth conversation to figure out what I wanted
+2. A concrete spec document with pages, features, and tech decisions
+3. A `CLAUDE.md` file so the agent has project context in every session
+4. Plan mode — agent reads everything, proposes an approach, I approve or push back
+5. Then it actually writes code
 
-That sequence matters. Each step builds context that makes the next step more precise.
+Skipping steps 1-3 is tempting. Don't.
 
-## Use Plan Mode Religiously
+## Plan mode is the move
 
-The most effective pattern I've found is **plan → approve → execute**:
+The pattern that worked best was: agent proposes a plan, I review it, then it executes. This caught misunderstandings before any code was written, which is where you want to catch them.
 
-```
-You: "Add page transitions and responsive polish"
+Without plan mode, I'd get 200 lines into an implementation and realize the agent had made a wrong assumption about the project structure three files ago. Rolling that back is annoying. Reading a plan and saying "no, not like that" takes ten seconds.
 
-Agent: [Enters plan mode]
-  - Reads all existing files
-  - Identifies what needs to change
-  - Proposes a step-by-step plan with specific files and changes
-  - Flags what it WON'T do and why
+## Context files are high leverage
 
-You: [Review plan, request adjustments]
+The `CLAUDE.md` file — a project context file the agent reads at the start of every session — ended up being one of the most valuable pieces of the whole setup. Mine has the tech stack, coding conventions, project structure, and one line that turned out to matter a lot: "The user is learning Svelte for the first time."
 
-Agent: [Executes approved plan]
-```
+That one line changed how the agent wrote code. More comments, simpler patterns, explanations of Svelte-specific idioms. Without it, the code was technically fine but harder for me to follow.
 
-Why this works: it catches misunderstandings *before* code is written. Rewriting a plan is cheap. Rewriting an implementation is expensive. Plan mode also forces the agent to think through the full scope, which surfaces edge cases and ordering dependencies early.
+## You still have to review everything
 
-## Write Context Files That Work
+This is the part people don't want to hear. The agent produces code that looks right and often is right, but "often" isn't "always." I caught issues by:
 
-A `CLAUDE.md` (or equivalent project context file) is the highest-leverage artifact in an agentic workflow. Mine includes:
+- Reading diffs instead of just looking at the result. The agent will sometimes "fix" something by quietly removing functionality.
+- Running `npm run check` and `npm run build` after every change. Type errors and build failures catch a whole category of problems.
+- Watching for over-engineering. The agent loves creating abstractions. It'll build a utility function for something that happens once, or add error handling for situations that can't occur. I pushed back on this a lot.
+- Checking API usage against docs. The agent sometimes uses function signatures that don't exist in the version of the library you're using. TypeScript catches most of these, but not all.
 
-- **Project overview** — What this is and who it's for
-- **Tech stack** — Specific versions and frameworks
-- **Key context** — "The user is learning Svelte for the first time" changes how the agent writes code
-- **Coding conventions** — Runes over stores, TypeScript everywhere, component size preferences
-- **Project structure** — Where things live and why
-- **Commands** — How to build, test, and check
+## Keep sessions short
 
-The agent reads this file at the start of every session. Good context files make the difference between "technically correct but weird" code and code that fits your project naturally.
+Long sessions degrade. The agent's context window fills up with old information, and it starts making references to things it changed three iterations ago. I got better results from focused sessions — one clear goal per session, with the context file carrying forward what matters.
 
-## Review Everything, Trust Nothing
+## Where this is heading
 
-This is non-negotiable. AI agents produce plausible-looking code that can be subtly wrong. Effective review habits:
+I think agentic coding is going to change how most software gets built. But right now, the developers who get the most out of it are the ones who bring strong opinions about what good code looks like. The agent is fast, but it has no taste. Your job is to supply the taste and the direction.
 
-**Read diffs, not just results.** The agent might "fix" something by removing functionality. Diffs show you what was removed.
-
-**Run the build.** If `npm run check` and `npm run build` pass, you've eliminated a whole class of issues. Make the agent run these before declaring success.
-
-**Check for over-engineering.** Agents love abstractions. Left unchecked, they'll create utility functions for one-time operations, add error handling for impossible scenarios, and build configuration systems for things with one value. Push back on unnecessary complexity.
-
-**Watch for hallucinated APIs.** The agent might use a function signature that doesn't exist in the version of the library you're using. Type checking catches most of these, but not all.
-
-## Keep Sessions Focused
-
-Long, sprawling sessions produce worse results than focused ones. Each session should have a clear goal:
-
-- **Session 1:** Write the spec
-- **Session 2:** Scaffold the project
-- **Session 3:** Design refinements (transitions, responsive, SEO)
-
-When sessions get too long, the agent's context window fills up with stale information. Starting a fresh session with good context files (`CLAUDE.md`, process logs) is more effective than continuing a degraded one.
-
-## Use Hooks and Guardrails
-
-Most agentic coding tools support hooks — scripts that run automatically before or after the agent takes actions. Use them:
-
-```javascript
-// Example: Block git commits that don't include README updates
-const isGitCommit = /(^|&&\s*|;\s*)git\s+commit\b/.test(command);
-if (isGitCommit) {
-  const staged = execSync('git diff --cached --name-only');
-  if (!staged.includes('README.md')) {
-    // Deny the commit with instructions to update docs first
-  }
-}
-```
-
-Hooks encode your process requirements as automated checks. The agent can't forget to update docs if a hook blocks commits without doc changes.
-
-## The Human's Job Changes, Not Disappears
-
-Working with an AI coding agent doesn't make you a passenger. Your job shifts from writing code to:
-
-- **Defining requirements** clearly enough to act on
-- **Making architectural decisions** the agent can't make alone
-- **Reviewing output** with enough depth to catch issues
-- **Steering direction** when the approach isn't working
-- **Maintaining quality standards** the agent doesn't inherently have
-
-The developers who get the most out of agentic coding are the ones who bring strong opinions about what good code looks like. The agent is a force multiplier — it multiplies whatever direction you point it in.
-
-## The Bottom Line
-
-Agentic coding is a genuinely new way to build software, but it's not magic. It works best when you bring structure (specs, context files, plans), discipline (review everything, keep sessions focused), and guardrails (hooks, type checking, build verification).
-
-The goal isn't to remove yourself from the process. It's to spend your time on the parts that matter most — design, architecture, and quality — while the agent handles the mechanical work of turning decisions into code.
+The goal isn't to remove yourself from the process. It's to spend your time on design and architecture instead of typing out boilerplate.

@@ -66,6 +66,12 @@ With the scaffold functional, a third session focused on design polish and SEO i
 4. **Root path migration:** Removed the `/PersonalSite` base path from `svelte.config.js` and updated `siteConfig.url` to `https://echoloquate.github.io` after the repo was renamed to serve from root.
 5. Committed and pushed to main.
 
+### Phase 5: Nav Hide-on-Scroll & Blog Post Rewrites
+
+1. **Nav hide-on-scroll:** Added scroll-direction tracking to `Nav.svelte` using a `$effect` with a passive scroll listener. The nav slides up off-screen when scrolling down (past 60px threshold) and reappears when scrolling up, with a 300ms CSS transition. Mobile menu auto-closes when the nav hides.
+2. **Blog post rewrites:** Rewrote all four blog posts (`hello-world`, `agentic-coding-best-practices`, `liquid-glass-css`, `building-with-sveltekit`) to sound less AI-generated — more casual voice, fewer perfectly parallel structures, more first-person asides, trimmed filler sections.
+3. Committed and pushed to main.
+
 ---
 
 ## Pages

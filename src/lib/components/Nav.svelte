@@ -13,14 +13,35 @@
 		{ href: '/contact', label: 'Contact' }
 	];
 
-	// $state rune creates reactive state (Svelte 5 reactivity primitive)
 	let mobileOpen = $state(false);
-
-	// $derived rune computes a value that auto-updates when dependencies change
 	let currentPath = $derived(page.url.pathname);
+
+	// Hide nav when scrolling down, show when scrolling up
+	let hidden = $state(false);
+	let lastScrollY = $state(0);
+
+	// $effect runs a side effect and auto-cleans up on destroy
+	$effect(() => {
+		function onScroll() {
+			const y = window.scrollY;
+			if (y > lastScrollY && y > 60) {
+				hidden = true;
+				mobileOpen = false;
+			} else {
+				hidden = false;
+			}
+			lastScrollY = y;
+		}
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		return () => window.removeEventListener('scroll', onScroll);
+	});
 </script>
 
-<nav class="glass-nav fixed top-4 left-1/2 z-50 -translate-x-1/2 max-w-[calc(100vw-2rem)] px-2 py-2">
+<nav
+	class="glass-nav fixed top-4 left-1/2 z-50 -translate-x-1/2 max-w-[calc(100vw-2rem)] px-2 py-2
+		transition-transform duration-300 {hidden ? '-translate-y-[calc(100%+2rem)]' : ''}"
+>
 	<!-- Desktop nav -->
 	<div class="hidden items-center gap-1 md:flex">
 		<a href="{base}/" class="px-3 py-1.5 font-semibold text-text-primary">

@@ -1,7 +1,7 @@
 ---
-title: 'Building Liquid Glass UI With Pure CSS'
+title: 'Liquid Glass UI With Pure CSS'
 date: '2026-02-09'
-description: A deep dive into backdrop-filter, layered transparency, and the CSS techniques behind frosted glass interfaces.
+description: How the frosted glass design on this site works — backdrop-filter, layered transparency, and the tricks that make it not look awful.
 tags:
   - css
   - design
@@ -10,13 +10,13 @@ readingTime: 7 min read
 published: true
 ---
 
-# Building Liquid Glass UI With Pure CSS
+# Liquid Glass UI With Pure CSS
 
-Apple's iOS 26 popularized the "Liquid Glass" design language — translucent panels with depth, blur, and layered transparency. It looks complex, but the core techniques are surprisingly accessible with modern CSS. This post breaks down how I built the glass design system for this site.
+Apple's iOS 26 brought "Liquid Glass" into the mainstream — those translucent panels with blur and depth that make everything look like it's floating behind frosted glass. I used it as the design language for this site, and it's surprisingly straightforward to pull off with modern CSS.
 
-## The Foundation: `backdrop-filter`
+## It's basically one property
 
-The entire glass effect hinges on one CSS property:
+The whole effect comes down to `backdrop-filter`:
 
 ```css
 .glass {
@@ -26,39 +26,38 @@ The entire glass effect hinges on one CSS property:
 }
 ```
 
-`backdrop-filter: blur()` blurs whatever is *behind* the element. Combined with a semi-transparent background, it creates the frosted glass illusion. The background color tints the blur — white tints create a light frost, dark tints create a moody, deep-glass look.
+`backdrop-filter: blur()` blurs whatever is behind the element. Pair that with a semi-transparent background and you get frosted glass. White-tinted backgrounds give you a light frost; dark tints give you something moodier.
 
-The `-webkit-` prefix is still needed for Safari. Don't skip it.
+You still need the `-webkit-` prefix for Safari. I keep forgetting this and wondering why it looks wrong on my phone.
 
-## Layering for Depth
+## Layer different intensities for depth
 
-A single glass panel is flat. The Liquid Glass effect comes alive with **multiple layers at different intensities**:
+One glass panel is flat and boring. The trick is using multiple levels:
 
 ```css
-/* Light glass — subtle, for large background panels */
 .glass-light {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(16px);
 }
 
-/* Medium glass — cards, interactive surfaces */
 .glass-medium {
   background: rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(24px);
 }
 
-/* Heavy glass — modals, elevated surfaces */
 .glass-heavy {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(40px);
 }
 ```
 
-The pattern: **higher elevation = more opacity + more blur.** Elements that feel "closer" to the user are more opaque and more blurred. This mimics how physical glass works — thicker glass is less transparent and distorts more.
+More opacity + more blur = feels closer to the user. It mimics real glass — thicker glass is less transparent and distorts more. I have three tiers on this site and that's been enough.
 
-## The Background Matters
+## Your background can make or break it
 
-Glass over a white background looks like nothing. Glass over a solid color looks like a tinted overlay. The effect only works when there's something visually interesting to blur. Gradient mesh backgrounds are ideal:
+Here's something I didn't think about at first: glass over a white background looks like nothing. Glass over a solid color looks like a tinted overlay. You need something visually interesting behind the glass for the blur to actually matter.
+
+Gradient meshes work great:
 
 ```css
 body {
@@ -71,16 +70,11 @@ body {
 }
 ```
 
-This stacks four radial gradients at different positions with different colors. The result is a rich, organic-looking background that gives the glass panels something beautiful to diffuse.
+Four radial gradients at different positions, different colors, moderate opacity. It gives the glass something to actually diffuse. I went with a dark base because it works better with light text and white-tinted panels.
 
-Key decisions:
-- **Dark base color** (`#0e0e1a`) — works better with light text and white-tinted glass
-- **Spread the gradients** — position them at different corners so the background varies across the page
-- **Keep opacity moderate** — `0.2–0.4` range prevents any single gradient from dominating
+## Borders and shadows sell it
 
-## Borders and Shadows
-
-Glass panels need edges and depth to feel physical. Two properties handle this:
+Without edges, the panels don't look physical:
 
 ```css
 .glass {
@@ -90,15 +84,11 @@ Glass panels need edges and depth to feel physical. Two properties handle this:
 }
 ```
 
-The **border** is a subtle white line that catches the "light" — it simulates the bright edge you see on real glass. Keep it thin (1px) and low opacity.
+The border is a subtle white line that catches the "light" — like the bright edge on real glass. Keep it 1px and low opacity. The shadow should be soft and diffused (big blur radius, moderate spread) so it feels like the panel is floating, not stamped. And be generous with border-radius. Liquid Glass doesn't do sharp corners — 12px minimum for small stuff, 20px+ for panels.
 
-The **shadow** pushes the panel off the background. Use large blur radius (32px+) and moderate spread for a soft, diffused shadow rather than a hard drop shadow. This is what makes it feel like glass floating in space rather than a card sitting on a page.
+## Hover states
 
-**Border radius** should be generous. Liquid Glass avoids sharp corners entirely — 12px minimum for small elements, 20px+ for panels.
-
-## Hover States That Feel Physical
-
-Static glass is nice. Interactive glass is better. Hover states should feel like the panel is lifting toward you:
+For interactive glass elements, a small lift on hover goes a long way:
 
 ```css
 .glass-card {
@@ -111,11 +101,11 @@ Static glass is nice. Interactive glass is better. Hover states should feel like
 }
 ```
 
-The combination of `translateY` (moves up) and increased shadow (falls further) creates a convincing lift effect. Keep the transform small — 2px to 4px is enough. More than that feels cartoonish.
+Move it up a few pixels and deepen the shadow. Anything over 4px starts looking overdone.
 
-## Glass Inputs and Buttons
+## Inputs and buttons
 
-Form elements need the same treatment, with a few adjustments:
+Form elements need the glass treatment too, with some adjustments. Inputs should feel recessed (lower opacity, less blur), while buttons feel raised:
 
 ```css
 .glass-input {
@@ -123,52 +113,42 @@ Form elements need the same treatment, with a few adjustments:
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: #f0f0f5;
-  transition: border-color 0.2s ease;
 }
 
 .glass-input:focus {
   outline: none;
-  border-color: #6eb1ff; /* accent color */
+  border-color: #6eb1ff;
 }
-```
 
-Inputs use **lower opacity and less blur** than panels — they're recessed, not elevated. The focus state swaps the border to an accent color rather than adding a glow or outline. This keeps the glass metaphor consistent.
-
-Buttons get slightly more opacity and a hover state that increases both background opacity and shadow:
-
-```css
 .glass-button {
   background: rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  transition: all 0.2s ease;
 }
 
 .glass-button:hover {
   background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
   transform: translateY(-1px);
 }
 ```
 
-## Performance Considerations
+Focus states swap the border to an accent color instead of adding a glow. Keeps things consistent.
 
-`backdrop-filter` is GPU-accelerated in modern browsers, but it's not free. A few things to watch:
+## Watch the performance
 
-- **Avoid stacking too many blurred elements.** Each one composites independently. Three or four layers is fine; ten will cause jank on mobile.
-- **Large blur values are more expensive.** 16px is cheap. 80px is not. Use the minimum blur that looks good.
-- **Test on real mobile devices.** Desktop performance is rarely an issue. Mid-range Android phones are where you'll feel it.
-- **The `-webkit-backdrop-filter` prefix** isn't just for Safari — some mobile browsers still need it.
+`backdrop-filter` is GPU-accelerated, but it's not free. Things I ran into:
 
-## Browser Support
+- Stacking too many blurred elements kills performance on mobile. Three or four layers is fine. Ten will cause jank.
+- Big blur values cost more. 16px is cheap, 80px is not.
+- Test on actual phones. I didn't see any issues on desktop but a mid-range Android phone showed frame drops until I dialed back the blur on a couple of elements.
 
-`backdrop-filter` has excellent support in 2026. Chrome, Safari, Firefox, and Edge all support it unprefixed. The main gap is older Android WebView versions, where you can provide a solid fallback:
+## Browser support
+
+`backdrop-filter` is well-supported in 2026. Chrome, Safari, Firefox, Edge all handle it. For older Android WebViews, you can fall back:
 
 ```css
 .glass {
-  /* Fallback for browsers without backdrop-filter */
   background: rgba(30, 30, 50, 0.9);
 }
 
@@ -180,18 +160,8 @@ Buttons get slightly more opacity and a hover state that increases both backgrou
 }
 ```
 
-The `@supports` query lets you serve an opaque background to browsers that can't blur, while glass-capable browsers get the full effect.
+Opaque background for browsers that can't blur, full glass for everything else.
 
-## Putting It Together
+## That's the whole system
 
-The Liquid Glass design system is really just five ingredients working together:
-
-1. **Semi-transparent backgrounds** — `rgba` with low alpha
-2. **Backdrop blur** — `backdrop-filter: blur()`
-3. **Gradient mesh background** — something beautiful to blur
-4. **Subtle borders and shadows** — edges and depth
-5. **Generous border radius** — soft, rounded corners
-
-No JavaScript required. No canvas tricks. No SVG filters. Pure CSS, and it works in every modern browser.
-
-The full source for this site's glass system is in `app.css` — about 90 lines of CSS that define the entire design language. Sometimes the best UI techniques are the simplest ones.
+Five ingredients: semi-transparent backgrounds, backdrop blur, a gradient mesh behind everything, borders and shadows for depth, and generous border-radius. No JavaScript, no canvas, no SVG filters. The entire glass design system for this site is about 90 lines of CSS.

@@ -1,7 +1,7 @@
 ---
 title: What I Learned Building My First SvelteKit Site
-date: '2026-02-11'
-description: Lessons from going all-in on SvelteKit and Svelte 5 as a first-timer — runes, file-based routing, and the things that surprised me.
+date: '2026-02-10'
+description: Notes from picking up SvelteKit and Svelte 5 with no prior Svelte experience.
 tags:
   - svelte
   - sveltekit
@@ -12,23 +12,23 @@ published: true
 
 # What I Learned Building My First SvelteKit Site
 
-I'd never touched Svelte before building this portfolio site. I chose SvelteKit specifically *because* it was unfamiliar — nothing forces you to learn like shipping something real. Here's what stood out.
+I picked SvelteKit for this portfolio site specifically because I hadn't used it before. I learn best by building something real, and a portfolio site felt like the right scope — enough pages and features to hit the rough edges, not so big that I'd abandon it.
 
-## Svelte 5 Runes Changed How I Think About State
+## Runes took a minute to click
 
-Coming from React, I was used to `useState` and `useEffect`. Svelte 5's runes feel like a different philosophy entirely. Instead of hooks that run on every render, runes are compile-time primitives that wire up reactivity at build time.
+Coming from React, I kept reaching for patterns that don't exist here. There's no `useState` setter, no `useEffect` dependency array. Svelte 5 runes are different at a fundamental level — the compiler wires up reactivity at build time instead of tracking it at runtime.
 
 ```svelte
 <script lang="ts">
-  // $state creates a reactive variable — no setter function needed
+  // $state creates a reactive variable — just assign to it, no setter
   let count = $state(0);
 
-  // $derived automatically tracks dependencies and recalculates
+  // $derived tracks its dependencies automatically
   let message = $derived(
     count === 0 ? 'Click to start' : 'Clicked ' + count + ' times'
   );
 
-  // $effect runs side effects when its dependencies change
+  // $effect also auto-tracks — no dependency array
   $effect(() => {
     console.log('Count is now: ' + count);
   });
@@ -39,18 +39,17 @@ Coming from React, I was used to `useState` and `useEffect`. Svelte 5's runes fe
 </button>
 ```
 
-The thing that surprised me: **there's no dependency array.** `$derived` and `$effect` track what you read automatically. No stale closure bugs. No forgotten dependencies. The compiler just figures it out.
+The lack of a dependency array tripped me up at first. I kept looking for where to declare dependencies and then realized... you don't. The compiler figures out what you read and tracks it. No stale closures, no forgotten deps. Once that clicked, it felt like a lot of ceremony I was used to just wasn't needed here.
 
-## File-Based Routing Is Genuinely Simpler
+## File-based routing, but with a trick
 
-SvelteKit uses the filesystem as the router. A file at `src/routes/blog/+page.svelte` becomes the `/blog` route. Dynamic routes use brackets — `src/routes/blog/[slug]/+page.svelte` handles `/blog/any-slug`.
+The filesystem-as-router thing is straightforward — `src/routes/blog/+page.svelte` becomes `/blog`, brackets for dynamic segments. Nothing surprising.
 
-The mental model is dead simple, but the real power is in the `+page.ts` load functions:
+But the `+page.ts` load functions are where it gets interesting:
 
 ```typescript
-// src/routes/blog/+page.ts
-// This runs before the page renders — on the server during SSR,
-// or at build time during prerendering.
+// This runs before the page renders — server-side during SSR,
+// or at build time if you're prerendering
 export async function load() {
   const postFiles = import.meta.glob('/src/posts/*.md', { eager: true });
 
@@ -64,30 +63,17 @@ export async function load() {
 }
 ```
 
-Data loading, server-side rendering, and prerendering all use the same mechanism. I didn't have to learn three different patterns for three different deployment targets.
+Same load function handles SSR, prerendering, and client-side navigation. I didn't have to learn three patterns for three deployment modes. That was a relief.
 
-## mdsvex Makes Blogging Feel Native
+## mdsvex just works
 
-One of the best decisions was using [mdsvex](https://mdsvex.pngwn.io/) for blog posts. It's Markdown with Svelte superpowers — you write `.md` files with frontmatter, and they become full Svelte components.
+I went with [mdsvex](https://mdsvex.pngwn.io/) for the blog. Write Markdown files with frontmatter, and they become Svelte components. Paired it with Shiki for syntax highlighting, and the whole blog setup took maybe half an hour.
 
-```markdown
----
-title: My Post
-date: '2026-02-11'
-tags:
-  - example
----
+No CMS to configure, no MDX compatibility issues to fight with, no build plugin rabbit holes. I wrote a `.md` file, dropped it in the posts folder, and it showed up. That's the kind of DX I want.
 
-# This is markdown
+## The layout system is nice
 
-But you can also use **Svelte components** inline.
-```
-
-Combined with Shiki for syntax highlighting, the blog infrastructure took maybe 30 minutes to set up. No external CMS, no build plugins to configure, no fighting with MDX compatibility issues.
-
-## The Layout System Is Elegant
-
-SvelteKit has a cascading layout system. A `+layout.svelte` file wraps all pages in its directory and below:
+SvelteKit's `+layout.svelte` wraps all pages in its directory:
 
 ```svelte
 <script lang="ts">
@@ -103,18 +89,16 @@ SvelteKit has a cascading layout system. A `+layout.svelte` file wraps all pages
 <Footer />
 ```
 
-Every page automatically gets the nav and footer. No wrapper components, no context providers, no layout prop drilling. It just works.
+Nav and footer on every page, no wrapper components, no context providers. Layouts cascade through nested directories too, so you can add sub-layouts for sections of your site without duplicating anything.
 
-## What I'd Do Differently
+## Things I'd do differently
 
-**Start with TypeScript from day one.** I did this and it paid off immediately — Svelte 5's type inference with `$props()` caught several bugs before I ever opened the browser.
+**Don't extract components too early.** I made a few "reusable" components that turned out to be used exactly once. Should have waited for actual repetition before abstracting.
 
-**Don't over-abstract early.** I started extracting components too soon. Some of those "reusable" components are only used once. Let patterns emerge from repetition before you DRY things up.
+**Read the SvelteKit docs first.** I spent time searching for answers to things that were covered clearly in the official guide. The docs are good — better than most frameworks I've used. I just didn't read them thoroughly enough up front.
 
-**Read the SvelteKit docs cover to cover.** They're some of the best framework docs I've encountered. I wasted time googling things that were clearly explained in the official guide.
+**TypeScript from the start** was the right call though. Svelte 5's type inference with `$props()` caught bugs before I ever opened the browser. No regrets there.
 
-## The Verdict
+## Would I use it again?
 
-SvelteKit feels like what web development should be. The compiler does the heavy lifting, the conventions are sensible, and you spend most of your time writing the thing you actually want to build — not fighting the framework.
-
-If you're on the fence about trying Svelte, just build something. The learning curve is genuinely short, and the "aha" moments come fast.
+Yeah. SvelteKit gets out of your way more than any other framework I've tried. The compiler handles the busywork, the conventions make sense, and I spent most of my time building the actual site instead of fighting tooling. If you've been meaning to try Svelte, just pick a project and go.
